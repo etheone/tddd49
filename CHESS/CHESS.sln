@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CHESS", "CHESS.csproj", "{F5D4D3A5-38EA-4168-AA12-4E08194078D3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F5D4D3A5-38EA-4168-AA12-4E08194078D3}.Debug|x86.ActiveCfg = Debug|x86
+		{F5D4D3A5-38EA-4168-AA12-4E08194078D3}.Debug|x86.Build.0 = Debug|x86
+		{F5D4D3A5-38EA-4168-AA12-4E08194078D3}.Release|x86.ActiveCfg = Release|x86
+		{F5D4D3A5-38EA-4168-AA12-4E08194078D3}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = CHESS.csproj
+	EndGlobalSection
+EndGlobal
