@@ -26,6 +26,7 @@ namespace CHESS
 		private Board board;
 		private bool firstClick;
 		private Coord fromPos, toPos;
+		List<Coord> legalMoves;
 		//private Coord toPos;
 
 		//User Interface variables
@@ -98,6 +99,7 @@ namespace CHESS
 		protected override void Update(GameTime gameTime)
 		{
 			//int index;
+
 			base.Update(gameTime);
 			//Console.WriteLine ("Updating");
 			MouseState ms = Mouse.GetState ();
@@ -116,12 +118,13 @@ namespace CHESS
 					// Here we try to make a move
 					board.tryMove (fromPos, toPos);
 
-
+					legalMoves = null;
 					/*if (Rules.isLegalMove (board.board [currentIndex [0], currentIndex [1]], board, newIndex)) {
 						EmptyPiece temp = new EmptyPiece (currentIndex [0], currentIndex [1], Piece.PieceColor.NONE);
 						board.board [newxPos, newyPos] = board.board [currentIndex [0], currentIndex [1]];
 						board.board [currentIndex [0], currentIndex [1]] = temp;
 					}*/
+
 
 
 					currentIndex [0] = 99;
@@ -132,36 +135,51 @@ namespace CHESS
 				} else {
 
 
-
 					int xPos = (int)(ms.X / 60);
 					int yPos = (int)(ms.Y / 60);
-					//Console.WriteLine ("First click: " + xPos + " " + yPos);
-					fromPos = new Coord (xPos, yPos);
+
+					if (board.board [xPos, yPos].color == board.turn) {
+
+						//Console.WriteLine ("First click: " + xPos + " " + yPos);
+						fromPos = new Coord (xPos, yPos);
 
 
-					if (moved == false) {
-						if (currentIndex [0] == xPos && currentIndex [1] == yPos) {
+						if (moved == false) {
+							if (currentIndex [0] == xPos && currentIndex [1] == yPos) {
 
-							currentIndex [0] = 99;
-							currentIndex [1] = 99;
-
-						} else {
-							currentIndex [0] = (int)(ms.X / 60);
-							currentIndex [1] = (int)(ms.Y / 60);
-						}
-
-						if (xPos < 8 && yPos < 8) {
-							if (currentIndex != null) {
-								Console.WriteLine (currentIndex);
-								Console.WriteLine (xPos + ", " + yPos);
+								currentIndex [0] = 99;
+								currentIndex [1] = 99;
 
 							} else {
+								currentIndex [0] = (int)(ms.X / 60);
+								currentIndex [1] = (int)(ms.Y / 60);
+							}
 
+							if (xPos < 8 && yPos < 8) {
+								if (currentIndex != null) {
+									Console.WriteLine (currentIndex);
+									Console.WriteLine (xPos + ", " + yPos);
+
+								} else {
+
+								}
 							}
 						}
+
+						firstClick = false;
+
+						legalMoves = Rules.getLegalMoves (board.board, fromPos);
+
+					} else {
+
+						Console.WriteLine ("NOT CORRECT TURN");
 					}
-					firstClick = false;
+
+
+
 				}
+
+
 
 			}
 		}
@@ -209,9 +227,10 @@ namespace CHESS
 					}
 					if (x == currentIndex [0] && y == currentIndex [1]) {
 						spriteBatch.Draw (dummyTexture, new Rectangle ((x * 60), (y * 60), 60, 60), Color.Blue);
-					} else {
+					}  else {
 						spriteBatch.Draw (dummyTexture, new Rectangle ((x * 60), (y * 60), 60, 60), squareColor);
 					}
+
 				//spriteBatch.Draw(dummyTexture, new Rectangle((i % Constants.NumberOfFiles) * Constants.SquareSize, (int)(i / Constants.NumberOfRanks) * Constants.SquareSize, Constants.SquareSize, Constants.SquareSize), squareColor);
 					// this one spriteBatch.Draw (dummyTexture, new Rectangle ((x * 60), (y * 60), 60, 60), squareColor);
 					//Console.WriteLine (board.board [y, x].GetType ());
@@ -235,9 +254,13 @@ namespace CHESS
 				
 				}
 
+			}
 
-
-			}	
+			if (legalMoves != null) {
+				foreach (Coord x in legalMoves) {
+					spriteBatch.Draw (dummyTexture, new Rectangle (((x.xpos * 60) + 25), ((x.ypos * 60) + 25), 10, 10), Color.LightBlue);
+				}
+			}
 
 			spriteBatch.End();
 
