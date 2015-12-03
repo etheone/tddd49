@@ -1,21 +1,21 @@
 using System;
+using System.Xml.Linq;
+using System.IO;
+using System.Linq;
 
 namespace CHESS
 {
 	public class Board
 	{
-		//Player player1;
-		//Player player2;
-		public Piece[,] board
-		{
-			get {
-				return _board;
-			}
-			set {
-				_board = Board.newBoard ();
-			}
-		}
-		private Piece[,] _board;
+		public Piece[,] board;
+
+		private AI ai2;
+		public AI ai1;
+		private bool fromFile = false;
+	
+
+		public String white = "ai";
+		private String black = "ai";
 
 		public Piece.PieceColor turn = Piece.PieceColor.WHITE;
 
@@ -24,25 +24,44 @@ namespace CHESS
 
 		public Board ()
 		{
-			System.Console.WriteLine ("Hello");
-			board = Board.newBoard ();
-			for (int i = 0; i < board.GetLength(0); i++)
-			{
-				for (int j = 0; j < board.GetLength(1); j++)
-				{
-					//string s = board[i, j];
-					//System.Console.Write (board[j,i].GetType() );
-					//System.Console.Write ("   ");
-					//if (board[i, j] is Rook) {
-					//	Console.WriteLine("It's a Rook!");
-					//}
+			if (fromFile == true) {
 
-					//Console.WriteLine(s);
-				}
-				System.Console.WriteLine ("\n");
+				board = createBoardFromFile ();
+
+			} else {
+				System.Console.WriteLine ("Initiating a new board");
+				board = Board.newBoard ();
+
+				whiteIsCheck = false;
+				blackIsCheck = false;
+				saveBoardToFile ();
 			}
-			whiteIsCheck = false;
-			blackIsCheck = false;
+
+			if (black == "ai") {
+				ai2 = new AI (Piece.PieceColor.BLACK);
+			}
+
+			if (white == "ai") {
+				ai1 = new AI (Piece.PieceColor.WHITE);
+			}
+		}
+
+		// Copy constructor
+		public Board(Board b) {
+
+
+			board = Board.newBoard ();
+			for (int y = 0; y < 8; y++) {
+				for (int x = 0; x < 8; x++) {
+					board [x, y] = new Piece (b.board [x, y]);
+				}
+			}
+
+
+			turn = b.turn;
+			whiteIsCheck = b.whiteIsCheck;
+			blackIsCheck = b.blackIsCheck;
+
 		}
 
 		private static Piece[,] newBoard()
@@ -80,31 +99,78 @@ namespace CHESS
 			return board;
 		}
 
+		public Piece[,] createBoardFromFile() {
+			Piece[,] board = new Piece[8,8];
+			XDocument prevGame = XDocument.Load("game.xml");
+
+			var lv0s = from lv0 in prevGame.Descendants ("settings")
+				select new {
+				Turn = lv0.Attribute("turn").Value,
+				White = lv0.Attribute("white").Value,
+				Black = lv0.Attribute("black").Value,
+				Whiteischeck = lv0.Attribute("whiteischeck").Value,
+				Blackischeck = lv0.Attribute("blackischeck").Value
+			};
+			
+			foreach (var lv0 in lv0s)
+			{
+				this.whiteIsCheck = Convert.ToBoolean (lv0.Whiteischeck);
+				this.blackIsCheck = Convert.ToBoolean (lv0.Blackischeck);
+				this.white = lv0.White;
+				this.black = lv0.Black;
+				this.turn = (Piece.PieceColor)Enum.Parse(typeof(Piece.PieceColor), lv0.Turn);
+			}
+
+			var lv1s = from lv1 in prevGame.Descendants ("square")
+				select new {
+				Type = lv1.Attribute("type").Value,
+				Color = lv1.Attribute("color").Value,
+				Coordx = lv1.Attribute("coordx").Value,
+				Coordy = lv1.Attribute("coordy").Value,
+				Texture = lv1.Attribute("texture").Value
+			};
+
+			int count = 0;
+			foreach (var lv1 in lv1s)
+			{
+				count += 1;
+
+				Piece.PieceType type = (Piece.PieceType)Enum.Parse(typeof(Piece.PieceType), lv1.Type);
+				Piece.PieceColor color = (Piece.PieceColor)Enum.Parse(typeof(Piece.PieceColor), lv1.Color);
+				int x = Int32.Parse (lv1.Coordx);
+				int y = Int32.Parse (lv1.Coordy);
+				int txt = Int32.Parse (lv1.Texture);
+
+				Piece temp = new Piece(type, x, y, color, txt);;
+				board [x, y] = temp;
+			}
+
+			return board;
+		}
+
 		public void tryMove(Coord fromPos, Coord toPos) {
-			//Console.WriteLine ("In tryMove-funcition");
-			//Console.WriteLine ("From x: " + fromPos.xpos + " y: " + fromPos.ypos);
-			//Console.WriteLine ("To x: " + toPos.xpos + " y: " + toPos.ypos);
+
 			Coord kingCoord = new Coord ();
+			
 			if ( Rules.isLegalMove (board, fromPos, toPos) ) {
 
 				board[fromPos.xpos, fromPos.ypos].moved = true;
 
-				Piece[,] tempBoard = new Piece[8,8];
-				tempBoard = (Piece[,])board.Clone ();
+				Board tempBoard = new Board (this);
 
-				Piece temp = tempBoard [fromPos.xpos, fromPos.ypos];
+				Piece temp = tempBoard.board [fromPos.xpos, fromPos.ypos];
+
 				temp.coord = toPos;
-				if (tempBoard [toPos.xpos, toPos.ypos].type != Piece.PieceType.NONE) {
-					tempBoard [toPos.xpos, toPos.ypos] = new Piece (Piece.PieceType.NONE, toPos.xpos, toPos.ypos, Piece.PieceColor.NONE, 99);
+				if (tempBoard.board [toPos.xpos, toPos.ypos].type != Piece.PieceType.NONE) {
+					tempBoard.board [toPos.xpos, toPos.ypos] = new Piece (Piece.PieceType.NONE, toPos.xpos, toPos.ypos, Piece.PieceColor.NONE, 99);
 				}
-				tempBoard [toPos.xpos, toPos.ypos].coord = fromPos;
-				tempBoard [fromPos.xpos, fromPos.ypos] = tempBoard [toPos.xpos, toPos.ypos];
-				tempBoard [toPos.xpos, toPos.ypos] = temp;
 
-				foreach (Piece p in board) {
+				tempBoard.board [fromPos.xpos, fromPos.ypos] = tempBoard.board [toPos.xpos, toPos.ypos];
+				tempBoard.board [toPos.xpos, toPos.ypos] = temp;
+
+				foreach (Piece p in tempBoard.board) {
 					if (p.type == Piece.PieceType.KING && p.color == turn) {
 						kingCoord = new Coord (p.coord.xpos, p.coord.ypos);
-						Console.WriteLine (kingCoord.xpos + " + " + kingCoord.ypos);
 					}
 
 				}
@@ -116,7 +182,7 @@ namespace CHESS
 					colorToCheck = Piece.PieceColor.WHITE;
 				}
 
-				if (!(Rules.isCheck (tempBoard, colorToCheck, kingCoord))) {
+				if (!(Rules.isCheck (tempBoard.board, colorToCheck, kingCoord))) {
 
 					swap (fromPos, toPos);
 
@@ -125,8 +191,6 @@ namespace CHESS
 					foreach (Piece p in board) {
 						if (p.type == Piece.PieceType.KING && p.color != turn) {
 							kingCoord = new Coord (p.coord.xpos, p.coord.ypos);
-							Console.WriteLine (kingCoord.xpos + " + " + kingCoord.ypos);
-							Console.WriteLine ("second pos");
 						}
 
 					}
@@ -146,8 +210,15 @@ namespace CHESS
 
 					if (turn == Piece.PieceColor.WHITE) {
 						turn = Piece.PieceColor.BLACK;
+						if (black == "ai") {
+							ai2.calculateMove (this);
+						}
 					} else {
 						turn = Piece.PieceColor.WHITE;
+
+						if (white == "ai") {
+							ai1.calculateMove (this);
+						}
 					}
 
 				} else {
@@ -156,45 +227,21 @@ namespace CHESS
 				}
 
 				if (whiteIsCheck) {
-					if (Rules.isCheckMate (board, Piece.PieceColor.WHITE)) {
+					if (Rules.isCheckMate (this, Piece.PieceColor.WHITE)) {
 						Console.WriteLine ("GAME IS OVER, BLACK WON");
 					}
 					Console.WriteLine ("check if white is checkmate");
 				}
 				if (blackIsCheck) {
-					if (Rules.isCheckMate (board, Piece.PieceColor.BLACK)) {
+					if (Rules.isCheckMate (this, Piece.PieceColor.BLACK)) {
 
 						Console.WriteLine ("GAME IS OVER, WHITE WON");
 					}
 					Console.WriteLine ("check if black is checkmate");
 				}
 
-				/*
-				//Investigate if move caused a Check.
+				saveBoardToFile ();
 
-				foreach (Piece p in board) {
-					if (p.type == Piece.PieceType.KING && p.color != turn) {
-						kingCoord = new Coord (p.coord.xpos, p.coord.ypos);
-						Console.WriteLine (kingCoord.xpos + " + " + kingCoord.ypos);
-						Console.WriteLine ("second pos");
-					}
-
-				}
-
-				if(Rules.isCheck(board, turn, kingCoord)) {
-					if(turn == Piece.PieceColor.BLACK) {
-						Console.WriteLine("White is in check");
-					} else {
-						Console.WriteLine("Black is in check");
-					}
-				}
-
-				if (turn == Piece.PieceColor.WHITE) {
-					turn = Piece.PieceColor.BLACK;
-				} else {
-					turn = Piece.PieceColor.WHITE;
-				}*/
-				//Console.WriteLine ("Here we should make the move.");
 			}
 		}
 
@@ -210,7 +257,50 @@ namespace CHESS
 			board [fromPos.xpos, fromPos.ypos] = board [toPos.xpos, toPos.ypos];
 			board [toPos.xpos, toPos.ypos] = temp;
 
+		}
 
+		public void startGame() {
+			if (white == "ai") {
+				ai1.calculateMove (this);
+			}
+		}
+
+		public void startNewGame() {
+			turn = Piece.PieceColor.WHITE;
+			board = newBoard ();
+			saveBoardToFile ();
+
+		}
+
+		public void saveBoardToFile() {
+
+			XElement xmlTree = new XElement("Root",
+			                                new XElement("settings", new XAttribute("turn", turn), 
+			             new XAttribute("white", white), 
+			             new XAttribute("black", black), 
+			             new XAttribute("whiteischeck", whiteIsCheck), 
+			             new XAttribute("blackischeck", blackIsCheck)));
+			XElement boardToAdd = new XElement ("board");
+
+			for (int i = 0; i < 8; i++)
+			{
+				for (int j = 0; j < 8; j++)
+				{
+					Piece p = new Piece (board [j, i].type, j, i, board [j, i].color, board [j, i].textureRef);
+					boardToAdd.Add (new XElement ("square", new XAttribute("color", p.color), 
+					                              new XAttribute("coordx", p.coord.xpos), 
+					                              new XAttribute("coordy", p.coord.ypos), 
+					                              new XAttribute("type", p.type), 
+					                              new XAttribute("texture", p.textureRef)));
+				}
+			}
+
+			xmlTree.Add (boardToAdd);
+
+			XDocument game = new XDocument();
+			game.Add (xmlTree);
+
+			game.Save ("game.xml");
 		}
 
 

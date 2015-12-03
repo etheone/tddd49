@@ -24,6 +24,7 @@ namespace CHESS
 		private Texture2D dummyTexture;
 		private int[] currentIndex = new int[] {99, 99};
 		private Board board;
+		private bool startGameClick = false;
 		private bool firstClick;
 		private Coord fromPos, toPos;
 		List<Coord> legalMoves;
@@ -77,110 +78,78 @@ namespace CHESS
 		{
 			// Create a new SpriteBatch, which can be used to draw textures.
 			spriteBatch = new SpriteBatch(GraphicsDevice);
-
-			// TODO: use this.Content to load your game content here
-
 			spriteBatch = new SpriteBatch(GraphicsDevice);
 			dummyTexture = new Texture2D(GraphicsDevice, 1, 1);
 			dummyTexture.SetData(new Color[] { Color.White });
 			LoadTextures();
+
 		}
 
-		/// <summary>
-		/// UnloadContent will be called once per game and is the place to unload
-		/// all content.
-		/// </summary>
 		protected override void UnloadContent()
 		{
-			// TODO: Unload any non ContentManager content here
-		}
 
+		}
 
 		protected override void Update(GameTime gameTime)
 		{
-			//int index;
 
 			base.Update(gameTime);
-			//Console.WriteLine ("Updating");
 			MouseState ms = Mouse.GetState ();
 			Boolean moved = false;
 			if (ms.LeftButton == ButtonState.Pressed) {
-				Console.WriteLine (firstClick);
-
+				if (startGameClick == false) {
+					startGameClick = true;
+					board.startGame ();
+					return;
+				}
+				if ((int)(ms.X) > 480) {
+					board.startNewGame ();
+					legalMoves = null;
+					return;
+				}
 				if (!firstClick) {
 
 					int newxPos = (int)(ms.X / 60);
 					int newyPos = (int)(ms.Y / 60);
-					//Console.WriteLine ("Second click: " + newxPos + " " + newyPos);
-					//int[] newIndex = new int[] {newxPos, newyPos};
+
 					toPos = new Coord (newxPos, newyPos);
 
 					// Here we try to make a move
 					board.tryMove (fromPos, toPos);
 
 					legalMoves = null;
-					/*if (Rules.isLegalMove (board.board [currentIndex [0], currentIndex [1]], board, newIndex)) {
-						EmptyPiece temp = new EmptyPiece (currentIndex [0], currentIndex [1], Piece.PieceColor.NONE);
-						board.board [newxPos, newyPos] = board.board [currentIndex [0], currentIndex [1]];
-						board.board [currentIndex [0], currentIndex [1]] = temp;
-					}*/
-
-
 
 					currentIndex [0] = 99;
 					currentIndex [1] = 99;
 					firstClick = true;
 					moved = true;
-
+				
 				} else {
-
-
 					int xPos = (int)(ms.X / 60);
 					int yPos = (int)(ms.Y / 60);
-
 					if (board.board [xPos, yPos].color == board.turn) {
-
-						//Console.WriteLine ("First click: " + xPos + " " + yPos);
 						fromPos = new Coord (xPos, yPos);
-
-
 						if (moved == false) {
 							if (currentIndex [0] == xPos && currentIndex [1] == yPos) {
-
 								currentIndex [0] = 99;
 								currentIndex [1] = 99;
-
 							} else {
 								currentIndex [0] = (int)(ms.X / 60);
 								currentIndex [1] = (int)(ms.Y / 60);
 							}
-
-							if (xPos < 8 && yPos < 8) {
+							/*if (xPos < 8 && yPos < 8) {
 								if (currentIndex != null) {
-									Console.WriteLine (currentIndex);
-									Console.WriteLine (xPos + ", " + yPos);
 
 								} else {
-
 								}
-							}
+							}*/
 						}
-
 						firstClick = false;
-
 						legalMoves = Rules.getLegalMoves (board.board, fromPos);
-
 					} else {
-
 						Console.WriteLine ("NOT CORRECT TURN");
 					}
-
-
-
 				}
-
-
-
 			}
 		}
 
@@ -195,6 +164,8 @@ namespace CHESS
 			spriteBatch.Begin();
 
 			//Draw Squares and Pieces
+			board.board = board.createBoardFromFile ();
+
 			Color squareColor = Color.White;
 			Texture2D textureToDraw;
 			for (int y = 0; y < board.board.GetLength(0); y++) 
@@ -218,7 +189,6 @@ namespace CHESS
 						if (y % 2 == 0)
 						{
 							squareColor = Color.Gray;
-							//Console.WriteLine ("HEI");
 						}
 						else
 						{
@@ -231,10 +201,6 @@ namespace CHESS
 						spriteBatch.Draw (dummyTexture, new Rectangle ((x * 60), (y * 60), 60, 60), squareColor);
 					}
 
-				//spriteBatch.Draw(dummyTexture, new Rectangle((i % Constants.NumberOfFiles) * Constants.SquareSize, (int)(i / Constants.NumberOfRanks) * Constants.SquareSize, Constants.SquareSize, Constants.SquareSize), squareColor);
-					// this one spriteBatch.Draw (dummyTexture, new Rectangle ((x * 60), (y * 60), 60, 60), squareColor);
-					//Console.WriteLine (board.board [y, x].GetType ());
-					//if (board.board [x, y].GetType () != typeof(EmptyPiece)) {
 					if (board.board [x, y].type != Piece.PieceType.NONE) {
 						if (board.board [x, y].color == Piece.PieceColor.WHITE) {
 							textureToDraw = textureArray [board.board [x, y].textureRef];
@@ -243,17 +209,10 @@ namespace CHESS
 							textureToDraw = textureArray [board.board[x, y].textureRef];
 							spriteBatch.Draw (textureToDraw, new Rectangle ((x * 60), (y * 60), 60, 60), Color.Beige);
 						}
-
-
-
-
 					} else {
 						spriteBatch.Draw (dummyTexture, new Rectangle ((x * 60), (y * 60), 60, 60), squareColor);
 					}
-				
-				
 				}
-
 			}
 
 			if (legalMoves != null) {
@@ -261,9 +220,7 @@ namespace CHESS
 					spriteBatch.Draw (dummyTexture, new Rectangle (((x.xpos * 60) + 25), ((x.ypos * 60) + 25), 10, 10), Color.LightBlue);
 				}
 			}
-
 			spriteBatch.End();
-
 			base.Draw(gameTime);
 		}
 

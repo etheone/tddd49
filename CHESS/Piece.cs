@@ -24,8 +24,6 @@ namespace CHESS
 
 		public Coord coord;
 		public bool moved;
-		//public  moved;
-		//protected string color;
 		public PieceColor color;
 		public PieceType type;
 		public int textureRef;
@@ -38,6 +36,17 @@ namespace CHESS
 			moved = false;
 			textureRef = tf;
 		}
+
+		// Copy constructor
+		public Piece (Piece p)
+		{
+			type = p.type;
+			coord = p.coord;
+			color = p.color;
+			moved = p.moved;
+			textureRef = p.textureRef;
+		}
+
 	}
 }
 

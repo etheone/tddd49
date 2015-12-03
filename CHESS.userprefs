@@ -1,13 +1,14 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="CHESS/Board.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="CHESS/AI.cs">
     <Files>
-      <File FileName="CHESS/Board.cs" Line="162" Column="40" />
-      <File FileName="CHESS/ChessGame.cs" Line="271" Column="4" />
-      <File FileName="CHESS/Rules.cs" Line="361" Column="34" />
-      <File FileName="CHESS/Program.cs" Line="1" Column="1" />
-      <File FileName="CHESS/Piece.cs" Line="1" Column="1" />
+      <File FileName="CHESS/Board.cs" Line="14" Column="33" />
+      <File FileName="CHESS/ChessGame.cs" Line="136" Column="16" />
+      <File FileName="CHESS/Rules.cs" Line="91" Column="7" />
+      <File FileName="CHESS/Program.cs" Line="17" Column="27" />
+      <File FileName="CHESS/Piece.cs" Line="40" Column="8" />
       <File FileName="CHESS/Coord.cs" Line="1" Column="1" />
+      <File FileName="CHESS/AI.cs" Line="181" Column="28" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
