@@ -58,6 +58,7 @@
     <Compile Include="Rules.cs" />
     <Compile Include="Coord.cs" />
     <Compile Include="AI.cs" />
+    <Compile Include="Player.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icon.png" />

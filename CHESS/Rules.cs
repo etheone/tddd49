@@ -4,13 +4,9 @@ using System.Linq;
 
 namespace CHESS
 {
-	public class Rules
+	// Contains all the rules for the game
+	public static class Rules
 	{
-
-		public Rules ()
-		{
-
-		}
 
 		public static bool isLegalMove(Piece[,] board, Coord fromPos, Coord toPos)
 		{
@@ -48,10 +44,7 @@ namespace CHESS
 				direction = 1;
 			}
 
-			///////////////////////////////////////////////
-			/// Handles diagonal movements aka killmoves///
-			///////////////////////////////////////////////
-
+			/// Handles diagonal movements aka killmoves
 			if (diffInX == 1 || diffInX == -1) {
 				if (diffInY == direction) {
 					if (board [fromPos.xpos, fromPos.ypos].color != board [toPos.xpos, toPos.ypos].color && board [toPos.xpos, toPos.ypos].type != Piece.PieceType.NONE) {
@@ -61,10 +54,7 @@ namespace CHESS
 				return false;
 			}
 
-			/////////////////////////////////////////////////////
-			/// Handles vertical movements //////////////////////
-			/////////////////////////////////////////////////////
-
+			/// Handles vertical movements 
 			if (fromPos.ypos > 0 && fromPos.ypos < 7) {
 				if (board [fromPos.xpos, fromPos.ypos + direction].type != Piece.PieceType.NONE) {
 					return false;
@@ -82,14 +72,7 @@ namespace CHESS
 
 			}
 
-		/*	if (fromPos.xpos - toPos.xpos == 0) {
-				if (toPos.ypos - fromPos.ypos == direction) {
-					return true;
-				} else if(board[fromPos.xpos,fromPos.ypos].moved == false && toPos.ypos - fromPos.ypos == (direction + direction)) {
-					return true;
-				}
-			}*/
-
+			//Handles Pawns first moves, where two steps are legal.
 			if (fromPos.xpos - toPos.xpos == 0) {
 				if (toPos.ypos - fromPos.ypos == direction) {
 					return true;
@@ -99,20 +82,9 @@ namespace CHESS
 					} else if (board [fromPos.xpos, fromPos.ypos].color == Piece.PieceColor.BLACK && fromPos.ypos == 1) {
 						return true;
 					}
-
 				}
 			}
 
-			/*if (fromPos.xpos - toPos.xpos == 0) {
-				if (toPos.ypos - fromPos.ypos == direction) {
-					return true;
-				} else if(board [fromPos.xpos, fromPos.ypos].color == Piece.PieceColor.WHITE && fromPos.ypos == 6) {
-					return true;
-				} else if (board [fromPos.xpos, fromPos.ypos].color == Piece.PieceColor.BLACK && fromPos.ypos == 1) {
-					return true;
-				}
-
-			}*/
 			return false;
 		}
 
@@ -274,7 +246,6 @@ namespace CHESS
 			}
 
 			return true;
-
 		}
 
 		private static bool isDiagonalMove(Coord fromPos, Coord toPos) {
@@ -282,7 +253,6 @@ namespace CHESS
 			int diffInY = toPos.ypos - fromPos.ypos;
 
 			return Math.Abs (diffInX) == Math.Abs (diffInY);
-
 		}
 
 		private static bool isStraightMove(Coord fromPos, Coord toPos) {
@@ -293,9 +263,9 @@ namespace CHESS
 				return true;
 
 			return false;
-
 		}
 
+		//Creates a list of legal moves for the piece at the position fromPos.
 		public static List<Coord> getLegalMoves(Piece[,] board, Coord fromPos) {
 
 			List<Coord> temp = new List<Coord>();
@@ -326,6 +296,7 @@ namespace CHESS
 					}
 				}
 			}
+
 			return false;
 		}
 
@@ -376,6 +347,7 @@ namespace CHESS
 
 				}
 			}
+
 			return true;
 		}
 

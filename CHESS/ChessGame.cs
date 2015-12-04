@@ -13,9 +13,8 @@ using CHESS;
 
 namespace CHESS
 {
-	/// <summary>
-	/// This is the main type for your game
-	/// </summary>
+
+	/// The UI class
 	public class ChessGame : Game
 	{
 
@@ -28,13 +27,7 @@ namespace CHESS
 		private bool firstClick;
 		private Coord fromPos, toPos;
 		List<Coord> legalMoves;
-		//private Coord toPos;
 
-		//User Interface variables
-
-		//Chess variables
-		//private List<ChessBoard> boardHistory;
-		//private ChessBoard boardInfo;
 		private Texture2D[] textureArray;
 
 		public ChessGame()
@@ -43,37 +36,18 @@ namespace CHESS
 			firstClick = true;
 			graphics = new GraphicsDeviceManager(this);
 			Content.RootDirectory = "Content";
-
 			board = new Board ();
-			// Frame rate is 30 fps by default for Windows Phone.
 			TargetElapsedTime = TimeSpan.FromTicks(666666);
-
-			// Extend battery life under lock.
-			//InactiveSleepTime = TimeSpan.FromSeconds(1);
-
 			textureArray = new Texture2D[12];
-			//undoRectangle = new Rectangle(540, 400, 200, 50);
-			//boardHistory = new List<ChessBoard>();
 			this.IsMouseVisible = true;
 		}
 
-		/// <summary>
-		/// Allows the game to perform any initialization it needs to before starting to run.
-		/// This is where it can query for any required services and load any non-graphic
-		/// related content.  Calling base.Initialize will enumerate through any components
-		/// and initialize them as well.
-		/// </summary>
 		protected override void Initialize()
 		{
-
-
 			base.Initialize();
 		}
 
-		/// <summary>
-		/// LoadContent will be called once per game and is the place to load
-		/// all of your content.
-		/// </summary>
+		//LoadContent will be called once per game, loading all content.
 		protected override void LoadContent()
 		{
 			// Create a new SpriteBatch, which can be used to draw textures.
@@ -137,12 +111,6 @@ namespace CHESS
 								currentIndex [0] = (int)(ms.X / 60);
 								currentIndex [1] = (int)(ms.Y / 60);
 							}
-							/*if (xPos < 8 && yPos < 8) {
-								if (currentIndex != null) {
-
-								} else {
-								}
-							}*/
 						}
 						firstClick = false;
 						legalMoves = Rules.getLegalMoves (board.board, fromPos);
@@ -153,10 +121,7 @@ namespace CHESS
 			}
 		}
 
-		/// <summary>
 		/// This is called when the game should draw itself.
-		/// </summary>
-		/// <param name="gameTime">Provides a snapshot of timing values.</param>
 		protected override void Draw(GameTime gameTime)
 		{
 			GraphicsDevice.Clear(Color.CornflowerBlue);

@@ -9,18 +9,20 @@ namespace CHESS
 	{
 		public Piece[,] board;
 
-		private AI ai2;
-		public AI ai1;
-		private bool fromFile = false;
+		private bool fromFile = true;
+
+		Player player1;
+		Player player2;
 	
 
-		public String white = "ai";
+		public String white = "player";
 		private String black = "ai";
 
 		public Piece.PieceColor turn = Piece.PieceColor.WHITE;
 
 		private bool whiteIsCheck;
 		private bool blackIsCheck;
+		DateTime lastWriteTime;
 
 		public Board ()
 		{
@@ -38,17 +40,21 @@ namespace CHESS
 			}
 
 			if (black == "ai") {
-				ai2 = new AI (Piece.PieceColor.BLACK);
+				player2 = new Player (Player.PlayerType.AI, this, Piece.PieceColor.BLACK);
+			} else {
+				player2 = new Player (Player.PlayerType.Player, this, Piece.PieceColor.BLACK);
 			}
 
 			if (white == "ai") {
-				ai1 = new AI (Piece.PieceColor.WHITE);
+				player1 = new Player (Player.PlayerType.AI, this, Piece.PieceColor.WHITE);;
+			} else {
+				player1 = new Player (Player.PlayerType.Player, this, Piece.PieceColor.WHITE);
 			}
+
 		}
 
-		// Copy constructor
+		// Copy constructor used to avoid reference problems in simulations
 		public Board(Board b) {
-
 
 			board = Board.newBoard ();
 			for (int y = 0; y < 8; y++) {
@@ -57,12 +63,12 @@ namespace CHESS
 				}
 			}
 
-
 			turn = b.turn;
 			whiteIsCheck = b.whiteIsCheck;
 			blackIsCheck = b.blackIsCheck;
 
 		}
+
 
 		private static Piece[,] newBoard()
 		{
@@ -100,54 +106,66 @@ namespace CHESS
 		}
 
 		public Piece[,] createBoardFromFile() {
-			Piece[,] board = new Piece[8,8];
-			XDocument prevGame = XDocument.Load("game.xml");
 
-			var lv0s = from lv0 in prevGame.Descendants ("settings")
-				select new {
-				Turn = lv0.Attribute("turn").Value,
-				White = lv0.Attribute("white").Value,
-				Black = lv0.Attribute("black").Value,
-				Whiteischeck = lv0.Attribute("whiteischeck").Value,
-				Blackischeck = lv0.Attribute("blackischeck").Value
-			};
-			
-			foreach (var lv0 in lv0s)
-			{
-				this.whiteIsCheck = Convert.ToBoolean (lv0.Whiteischeck);
-				this.blackIsCheck = Convert.ToBoolean (lv0.Blackischeck);
-				this.white = lv0.White;
-				this.black = lv0.Black;
-				this.turn = (Piece.PieceColor)Enum.Parse(typeof(Piece.PieceColor), lv0.Turn);
+			var info = new FileInfo ("game.xml");
+			var tempTime = info.LastWriteTime;
+			if(DateTime.Compare(tempTime, lastWriteTime) > 0) {
+
+				Piece[,] board = new Piece[8,8];
+				XDocument prevGame = XDocument.Load("game.xml");
+
+				var lv0s = from lv0 in prevGame.Descendants ("settings")
+					select new {
+					Turn = lv0.Attribute("turn").Value,
+					White = lv0.Attribute("white").Value,
+					Black = lv0.Attribute("black").Value,
+					Whiteischeck = lv0.Attribute("whiteischeck").Value,
+					Blackischeck = lv0.Attribute("blackischeck").Value
+				};
+
+				foreach (var lv0 in lv0s)
+				{
+					this.whiteIsCheck = Convert.ToBoolean (lv0.Whiteischeck);
+					this.blackIsCheck = Convert.ToBoolean (lv0.Blackischeck);
+					this.white = lv0.White;
+					this.black = lv0.Black;
+					this.turn = (Piece.PieceColor)Enum.Parse(typeof(Piece.PieceColor), lv0.Turn);
+				}
+
+				var lv1s = from lv1 in prevGame.Descendants ("square")
+					select new {
+					Type = lv1.Attribute("type").Value,
+					Color = lv1.Attribute("color").Value,
+					Coordx = lv1.Attribute("coordx").Value,
+					Coordy = lv1.Attribute("coordy").Value,
+					Texture = lv1.Attribute("texture").Value
+				};
+
+				int count = 0;
+				foreach (var lv1 in lv1s)
+				{
+					count += 1;
+
+					Piece.PieceType type = (Piece.PieceType)Enum.Parse(typeof(Piece.PieceType), lv1.Type);
+					Piece.PieceColor color = (Piece.PieceColor)Enum.Parse(typeof(Piece.PieceColor), lv1.Color);
+					int x = Int32.Parse (lv1.Coordx);
+					int y = Int32.Parse (lv1.Coordy);
+					int txt = Int32.Parse (lv1.Texture);
+
+					Piece temp = new Piece(type, x, y, color, txt);;
+					board [x, y] = temp;
+				}
+
+				lastWriteTime = info.LastWriteTime;
+				return board;
+				
+			} else { 
+
+				return this.board;
 			}
-
-			var lv1s = from lv1 in prevGame.Descendants ("square")
-				select new {
-				Type = lv1.Attribute("type").Value,
-				Color = lv1.Attribute("color").Value,
-				Coordx = lv1.Attribute("coordx").Value,
-				Coordy = lv1.Attribute("coordy").Value,
-				Texture = lv1.Attribute("texture").Value
-			};
-
-			int count = 0;
-			foreach (var lv1 in lv1s)
-			{
-				count += 1;
-
-				Piece.PieceType type = (Piece.PieceType)Enum.Parse(typeof(Piece.PieceType), lv1.Type);
-				Piece.PieceColor color = (Piece.PieceColor)Enum.Parse(typeof(Piece.PieceColor), lv1.Color);
-				int x = Int32.Parse (lv1.Coordx);
-				int y = Int32.Parse (lv1.Coordy);
-				int txt = Int32.Parse (lv1.Texture);
-
-				Piece temp = new Piece(type, x, y, color, txt);;
-				board [x, y] = temp;
-			}
-
-			return board;
 		}
 
+		// Ask the rules if a move between two positions is legal, calls swap() if ok
 		public void tryMove(Coord fromPos, Coord toPos) {
 
 			Coord kingCoord = new Coord ();
@@ -210,34 +228,30 @@ namespace CHESS
 
 					if (turn == Piece.PieceColor.WHITE) {
 						turn = Piece.PieceColor.BLACK;
-						if (black == "ai") {
-							ai2.calculateMove (this);
-						}
+						player2.nextMove ();
 					} else {
 						turn = Piece.PieceColor.WHITE;
+						player1.nextMove ();
 
-						if (white == "ai") {
-							ai1.calculateMove (this);
-						}
 					}
 
+
 				} else {
-					// Check if chackmate here
 					Console.WriteLine ("Cant move because king will be checked");
 				}
 
 				if (whiteIsCheck) {
+					Console.WriteLine ("check if white is checkmate");
 					if (Rules.isCheckMate (this, Piece.PieceColor.WHITE)) {
 						Console.WriteLine ("GAME IS OVER, BLACK WON");
 					}
-					Console.WriteLine ("check if white is checkmate");
 				}
 				if (blackIsCheck) {
+					Console.WriteLine ("check if black is checkmate");
 					if (Rules.isCheckMate (this, Piece.PieceColor.BLACK)) {
 
 						Console.WriteLine ("GAME IS OVER, WHITE WON");
 					}
-					Console.WriteLine ("check if black is checkmate");
 				}
 
 				saveBoardToFile ();
@@ -245,6 +259,7 @@ namespace CHESS
 			}
 		}
 
+		// Swaps the pieces in two positions on the board
 		private void swap(Coord fromPos, Coord toPos) 
 		{
 
@@ -260,16 +275,13 @@ namespace CHESS
 		}
 
 		public void startGame() {
-			if (white == "ai") {
-				ai1.calculateMove (this);
-			}
+			player1.nextMove ();
 		}
 
 		public void startNewGame() {
 			turn = Piece.PieceColor.WHITE;
 			board = newBoard ();
 			saveBoardToFile ();
-
 		}
 
 		public void saveBoardToFile() {
@@ -301,6 +313,7 @@ namespace CHESS
 			game.Add (xmlTree);
 
 			game.Save ("game.xml");
+			var info = new FileInfo ("game.xml");
 		}
 
 

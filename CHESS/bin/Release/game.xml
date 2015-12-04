@@ -5,27 +5,27 @@
     <square color="BLACK" coordx="0" coordy="0" type="ROOK" texture="8" />
     <square color="BLACK" coordx="1" coordy="0" type="KNIGHT" texture="10" />
     <square color="BLACK" coordx="2" coordy="0" type="BISHOP" texture="9" />
-    <square color="BLACK" coordx="3" coordy="0" type="QUEEN" texture="7" />
-    <square color="BLACK" coordx="4" coordy="0" type="KING" texture="6" />
-    <square color="BLACK" coordx="5" coordy="0" type="BISHOP" texture="9" />
+    <square color="NONE" coordx="3" coordy="0" type="NONE" texture="99" />
+    <square color="NONE" coordx="4" coordy="0" type="NONE" texture="99" />
+    <square color="BLACK" coordx="5" coordy="0" type="KING" texture="6" />
     <square color="BLACK" coordx="6" coordy="0" type="KNIGHT" texture="10" />
     <square color="BLACK" coordx="7" coordy="0" type="ROOK" texture="8" />
     <square color="BLACK" coordx="0" coordy="1" type="PAWN" texture="11" />
-    <square color="NONE" coordx="1" coordy="1" type="NONE" texture="99" />
-    <square color="BLACK" coordx="2" coordy="1" type="PAWN" texture="11" />
+    <square color="BLACK" coordx="1" coordy="1" type="PAWN" texture="11" />
+    <square color="NONE" coordx="2" coordy="1" type="NONE" texture="99" />
     <square color="BLACK" coordx="3" coordy="1" type="PAWN" texture="11" />
-    <square color="BLACK" coordx="4" coordy="1" type="PAWN" texture="11" />
+    <square color="NONE" coordx="4" coordy="1" type="NONE" texture="99" />
     <square color="BLACK" coordx="5" coordy="1" type="PAWN" texture="11" />
-    <square color="NONE" coordx="6" coordy="1" type="NONE" texture="99" />
-    <square color="NONE" coordx="7" coordy="1" type="NONE" texture="99" />
+    <square color="BLACK" coordx="6" coordy="1" type="PAWN" texture="11" />
+    <square color="BLACK" coordx="7" coordy="1" type="PAWN" texture="11" />
     <square color="NONE" coordx="0" coordy="2" type="NONE" texture="99" />
-    <square color="BLACK" coordx="1" coordy="2" type="PAWN" texture="11" />
+    <square color="NONE" coordx="1" coordy="2" type="NONE" texture="99" />
     <square color="NONE" coordx="2" coordy="2" type="NONE" texture="99" />
     <square color="NONE" coordx="3" coordy="2" type="NONE" texture="99" />
-    <square color="NONE" coordx="4" coordy="2" type="NONE" texture="99" />
+    <square color="BLACK" coordx="4" coordy="2" type="PAWN" texture="11" />
     <square color="NONE" coordx="5" coordy="2" type="NONE" texture="99" />
     <square color="NONE" coordx="6" coordy="2" type="NONE" texture="99" />
-    <square color="BLACK" coordx="7" coordy="2" type="PAWN" texture="11" />
+    <square color="NONE" coordx="7" coordy="2" type="NONE" texture="99" />
     <square color="NONE" coordx="0" coordy="3" type="NONE" texture="99" />
     <square color="NONE" coordx="1" coordy="3" type="NONE" texture="99" />
     <square color="NONE" coordx="2" coordy="3" type="NONE" texture="99" />
@@ -33,12 +33,12 @@
     <square color="NONE" coordx="4" coordy="3" type="NONE" texture="99" />
     <square color="NONE" coordx="5" coordy="3" type="NONE" texture="99" />
     <square color="NONE" coordx="6" coordy="3" type="NONE" texture="99" />
-    <square color="BLACK" coordx="7" coordy="3" type="PAWN" texture="11" />
-    <square color="NONE" coordx="0" coordy="4" type="NONE" texture="99" />
+    <square color="NONE" coordx="7" coordy="3" type="NONE" texture="99" />
+    <square color="BLACK" coordx="0" coordy="4" type="QUEEN" texture="7" />
     <square color="NONE" coordx="1" coordy="4" type="NONE" texture="99" />
-    <square color="WHITE" coordx="2" coordy="4" type="BISHOP" texture="3" />
-    <square color="NONE" coordx="3" coordy="4" type="NONE" texture="99" />
-    <square color="WHITE" coordx="4" coordy="4" type="PAWN" texture="5" />
+    <square color="NONE" coordx="2" coordy="4" type="NONE" texture="99" />
+    <square color="WHITE" coordx="3" coordy="4" type="PAWN" texture="5" />
+    <square color="WHITE" coordx="4" coordy="4" type="QUEEN" texture="1" />
     <square color="NONE" coordx="5" coordy="4" type="NONE" texture="99" />
     <square color="NONE" coordx="6" coordy="4" type="NONE" texture="99" />
     <square color="NONE" coordx="7" coordy="4" type="NONE" texture="99" />
@@ -47,14 +47,14 @@
     <square color="NONE" coordx="2" coordy="5" type="NONE" texture="99" />
     <square color="NONE" coordx="3" coordy="5" type="NONE" texture="99" />
     <square color="NONE" coordx="4" coordy="5" type="NONE" texture="99" />
-    <square color="WHITE" coordx="5" coordy="5" type="KNIGHT" texture="4" />
+    <square color="NONE" coordx="5" coordy="5" type="NONE" texture="99" />
     <square color="NONE" coordx="6" coordy="5" type="NONE" texture="99" />
     <square color="NONE" coordx="7" coordy="5" type="NONE" texture="99" />
     <square color="WHITE" coordx="0" coordy="6" type="PAWN" texture="5" />
-    <square color="WHITE" coordx="1" coordy="6" type="PAWN" texture="5" />
-    <square color="WHITE" coordx="2" coordy="6" type="PAWN" texture="5" />
-    <square color="WHITE" coordx="3" coordy="6" type="PAWN" texture="5" />
-    <square color="NONE" coordx="4" coordy="6" type="NONE" texture="99" />
+    <square color="NONE" coordx="1" coordy="6" type="NONE" texture="99" />
+    <square color="NONE" coordx="2" coordy="6" type="NONE" texture="99" />
+    <square color="NONE" coordx="3" coordy="6" type="NONE" texture="99" />
+    <square color="WHITE" coordx="4" coordy="6" type="KING" texture="0" />
     <square color="WHITE" coordx="5" coordy="6" type="PAWN" texture="5" />
     <square color="WHITE" coordx="6" coordy="6" type="PAWN" texture="5" />
     <square color="WHITE" coordx="7" coordy="6" type="PAWN" texture="5" />
@@ -62,9 +62,9 @@
     <square color="WHITE" coordx="1" coordy="7" type="KNIGHT" texture="4" />
     <square color="WHITE" coordx="2" coordy="7" type="BISHOP" texture="3" />
     <square color="NONE" coordx="3" coordy="7" type="NONE" texture="99" />
-    <square color="WHITE" coordx="4" coordy="7" type="KING" texture="0" />
-    <square color="NONE" coordx="5" coordy="7" type="NONE" texture="99" />
-    <square color="NONE" coordx="6" coordy="7" type="NONE" texture="99" />
+    <square color="NONE" coordx="4" coordy="7" type="NONE" texture="99" />
+    <square color="WHITE" coordx="5" coordy="7" type="BISHOP" texture="3" />
+    <square color="WHITE" coordx="6" coordy="7" type="KNIGHT" texture="4" />
     <square color="WHITE" coordx="7" coordy="7" type="ROOK" texture="2" />
   </board>
 </Root>
